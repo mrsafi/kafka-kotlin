@@ -1,0 +1,31 @@
+server:
+  port: 7002
+spring:
+  application:
+    name: consumer
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: "localhost:9092"
+        bindings:
+          processTransitAccountData-in-0:
+            consumer:
+              configuration:
+                key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                value.deserializer: com.provility.consumer.serdes.TransitAccountDataDeserializer
+          processTapEventData-in-0:
+            consumer:
+              configuration:
+                key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                value.deserializer: com.provility.consumer.serdes.TapEventDataDeserializer
+      bindings:
+        processTransitAccountData-in-0:
+          group: ${spring.application.name}
+          destination: transit-account-data
+        processTapEventData-in-0:
+          group: ${spring.application.name}
+          destination: tap-event-data
+    function:
+      # We define this explicitly since we have several consumer functions
+      definition: processTransitAccountData;processTapEventData

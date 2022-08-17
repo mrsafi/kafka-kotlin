@@ -1,0 +1,36 @@
+server:
+  port: 7001
+spring:
+  application:
+    name: producer
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: "localhost:9092"
+        bindings:
+          transit-account-data-out-0:
+            producer:
+              configuration:
+                key.serializer: org.springframework.kafka.support.serializer.ToStringSerializer
+                value.serializer: org.springframework.kafka.support.serializer.JsonSerializer
+                # which can't be deserialized by consumers (unless they have kafka.properties.spring.json.use.type.headers: false themselves)
+                spring.json.add.type.headers: false
+          tap-event-data-out-0:
+            producer:
+              configuration:
+                key.serializer: org.springframework.kafka.support.serializer.ToStringSerializer
+                value.serializer: org.springframework.kafka.support.serializer.JsonSerializer
+                # which can't be deserialized by consumers (unless they have kafka.properties.spring.json.use.type.headers: false themselves)
+                spring.json.add.type.headers: false
+      bindings:
+        transit-account-data-out-0:
+          producer:
+            # use kafka internal encoding
+            useNativeEncoding: true
+          destination: transit-account-data
+        tap-event-data-out-0:
+          producer:
+            # use kafka internal encoding
+            useNativeEncoding: true
+          destination: tap-event-data
